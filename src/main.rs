@@ -1,6 +1,7 @@
 /// file: main.rs
 use concrete_lib::*;
 use std::time::{Duration, Instant};
+use std::env;
 
 fn encrypt_decrypt(iterations : usize) -> Result<(), CryptoAPIError> {
     let mut duration_key_vec : Vec<f64> = Vec::new();
@@ -20,7 +21,7 @@ fn encrypt_decrypt(iterations : usize) -> Result<(), CryptoAPIError> {
         let messages: Vec<f64> = vec![-6.276, 4.3, 0.12, -1.1, 7.78]; // Vector de mensajes
         // println!("Mensaje original: {:?}", messages);
 
-        secret_key.save("my_very_secret_key.json"); // Función para guardar la clave en un archivo .json
+        secret_key.save("my_very_secret_key.json").unwrap(); // Función para guardar la clave en un archivo .json
 
         let start_encryption = Instant::now(); // Comenzar temporizador
         // create an encoder
@@ -482,27 +483,29 @@ fn mul_of_constants(iterations : usize) -> Result<(), CryptoAPIError> {
 
 fn main() -> Result<(), CryptoAPIError> {
 
-    let iterations : usize = 20;
+    //let iterations : usize = 20;
+    let args : Vec<String> =  env::args().collect();
+    let iterations : usize = args[1].parse().unwrap();
 
     println!("PRIMERA IMPLEMENTACIÓN: Cifrado y descifrado de un mensaje");
     println!("Trabajando...");
-    encrypt_decrypt(iterations.clone());
+    encrypt_decrypt(iterations.clone()).unwrap();
 
     println!("\n\nSEGUNDA IMPLEMENTACIÓN: Key Switching");
     println!("Trabajando...");
-    key_switching(iterations.clone());
+    key_switching(iterations.clone()).unwrap();
 
     println!("\n\nTERCERA IMPLEMENTACIÓN: Suma de constantes y mensaje cifrado");
     println!("Trabajando...");
-    sum_of_constants(iterations.clone());
+    sum_of_constants(iterations.clone()).unwrap();
 
     println!("\n\nCUARTA IMPLEMENTACIÓN: Suma de mensajes cifrados");
     println!("Trabajando...");
-    sum_of_ciphertexts(iterations.clone());
+    sum_of_ciphertexts(iterations.clone()).unwrap();
 
     println!("\n\nQUINTA IMPLEMENTACIÓN: Multiplicación de constantres y un mensaje cifrado");
     println!("Trabajando...");
-    mul_of_constants(iterations.clone());
+    mul_of_constants(iterations.clone()).unwrap();
 
 /*
     //////////////////////////////////////////////////////////////////////////////////7
