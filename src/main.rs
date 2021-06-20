@@ -41,7 +41,7 @@ fn encrypt_decrypt(iterations : usize) -> Result<(), CryptoAPIError> {
         // Calcular error de cada elemento
         let mut error_vec : Vec<f64> = Vec::new();
         for (index, element) in outputs.iter().enumerate(){
-            error_vec.push((element - messages[index]).abs()/(messages[index]));
+            error_vec.push((element - messages[index]).abs()/(messages[index]).abs());
         }
 
         // Calcular error medio del mensaje
@@ -136,7 +136,7 @@ fn key_switching(iterations : usize) -> Result<(), CryptoAPIError> {
         // Calcular error de cada elemento
         let mut error_vec : Vec<f64> = Vec::new();
         for (index, element) in outputs.iter().enumerate(){
-            error_vec.push((element - messages[index]).abs()/(messages[index]));
+            error_vec.push((element - messages[index]).abs()/(messages[index]).abs());
         }
 
         // println!("Error {:?}", error_vec);
@@ -239,7 +239,7 @@ fn sum_of_constants(iterations : usize) -> Result<(), CryptoAPIError> {
         // Calcular error de cada elemento
         let mut error_vec : Vec<f64> = Vec::new();
         for (index, element) in outputs.iter().enumerate(){
-            error_vec.push((element - sum_real_result[index]).abs()/(sum_real_result[index]));
+            error_vec.push((element - sum_real_result[index]).abs()/(sum_real_result[index]).abs());
         }
 
         // Calcular error medio del mensaje
@@ -338,7 +338,7 @@ fn sum_of_ciphertexts(iterations : usize) -> Result<(), CryptoAPIError> {
         // Calcular error de cada elemento
         let mut error_vec : Vec<f64> = Vec::new();
         for (index, element) in outputs.iter().enumerate(){
-            error_vec.push((element - sum_real_result[index]).abs()/(sum_real_result[index]));
+            error_vec.push((element - sum_real_result[index]).abs()/(sum_real_result[index]).abs());
         }
 
         // Calcular error medio del mensaje
@@ -385,12 +385,104 @@ fn sum_of_ciphertexts(iterations : usize) -> Result<(), CryptoAPIError> {
 }
 
 fn mul_of_constants(iterations : usize) -> Result<(), CryptoAPIError> {
+    let mut duration_key_vec : Vec<f64> = Vec::new();
+    let mut duration_encryption_vec : Vec<f64> = Vec::new();
+    let mut duration_mul_vec: Vec<f64> = Vec::new();
+    let mut duration_decryption_vec : Vec<f64> = Vec::new();
+    let mut duration_complete_vec : Vec<f64> = Vec::new();
+    let mut error_complete_vec : Vec<f64> = Vec::new();
+
+    for index in 0..iterations{
+
+        // println!("--- Multiplicar un vector de constantes por un mensaje cifrado ---\n");
+
+        // generate a secret key
+        let start_key = Instant::now(); // Comenzar temporizador
+        let secret_key = LWESecretKey::new(&LWE128_1024); // Generar clave de cifrado
+        let duration_key = start_key.elapsed(); // Finalizar temporizador
+        duration_key_vec.push(duration_key.as_secs_f64());
+
+        let messages: Vec<f64> = vec![6.1, 5.4, -2.7];
+        let constants: Vec<i32> = vec![-4, 5, 3];
+
+        // encoder
+        let start_encryption = Instant::now(); // Comenzar temporizador
+        let encoder = Encoder::new(-30., 30., 8, 0)?;
+        let mut ciphertext_vector = VectorLWE::encode_encrypt(&secret_key, &messages, &encoder)?;
+        let duration_encryption = start_encryption.elapsed(); // Finalizar temporizador
+        duration_encryption_vec.push(duration_encryption.as_secs_f64());
+
+        // vector multiplication between ciphertext and constants
+        let start_mult = Instant::now(); // Comenzar temporizador
+        ciphertext_vector.mul_constant_static_encoder_inplace(&constants)?;
+        let duration_mult = start_mult.elapsed(); // Finalizar temporizador
+        duration_mul_vec.push(duration_mult.as_secs_f64());
+
+        // decryption
+        let start_decryption = Instant::now(); // Comenzar temporizador
+        let outputs: Vec<f64> = ciphertext_vector.decrypt_decode(&secret_key)?;
+        let duration_decryption = start_decryption.elapsed(); // Finalizar temporizador
+        duration_decryption_vec.push(duration_decryption.as_secs_f64());
+        duration_complete_vec.push(start_key.elapsed().as_secs_f64());
+
+        // Calcular resultado sin error
+        let mut mul_real_result: Vec<f64> = Vec::new();
+        for (index, element) in messages.iter().enumerate(){
+            mul_real_result.push(element * (constants[index] as f64));
+        }
+
+        // Calcular error de cada elemento
+        let mut error_vec : Vec<f64> = Vec::new();
+        for (index, element) in outputs.iter().enumerate(){
+            error_vec.push((element - mul_real_result[index]).abs()/(mul_real_result[index]).abs());
+        }
+
+        // Calcular error medio del mensaje
+        let mut sum : f64 = 0.;
+        for (index, element) in error_vec.iter().enumerate(){
+            sum = sum + element;
+        }
+        error_complete_vec.push(sum/(error_vec.len() as f64));
+    }
+
+    let mut encrypt_sum : f64 = 0.;
+    let mut mul_sum: f64 = 0.;
+    let mut key_sum : f64 = 0.;
+    let mut decrypt_sum : f64 = 0.;
+    let mut complete_sum : f64 = 0.;
+    let mut error_sum : f64 = 0.;
+
+    // Calcular la media de todas las iteraciones
+    for index in 0..iterations{
+        encrypt_sum = duration_encryption_vec[index] + encrypt_sum;
+        mul_sum = duration_mul_vec[index] + mul_sum;
+        decrypt_sum = duration_decryption_vec[index] + decrypt_sum;
+        key_sum = duration_key_vec[index] + key_sum;
+        complete_sum = duration_complete_vec[index] + complete_sum;
+        error_sum = error_complete_vec[index] + error_sum;
+    }
+
+    let iterations_f64 : f64 = iterations as f64;
+    let average_encrypt: f64 = encrypt_sum / iterations_f64.clone();
+    let average_mul: f64 = mul_sum / iterations_f64.clone();
+    let average_decrypt : f64 = decrypt_sum / iterations_f64.clone();
+    let average_key : f64 = key_sum / iterations_f64.clone();
+    let average_complete : f64 = complete_sum / iterations_f64.clone();
+    let average_error : f64 = error_sum / iterations_f64.clone();
+
+    println!("/ RESULTS /");
+    println!("Encrypt average: {:?}s", average_encrypt);
+    println!("Multiplication average: {:?}s", average_mul);
+    println!("Decrypt average: {:?}s", average_decrypt);
+    println!("Key Generation average: {:?}s", average_key);
+    println!("Execution average: {:?}s", average_complete);
+    println!("Average messages error: {:?}%", average_error * 100.);
     return Ok(());
 }
 
 fn main() -> Result<(), CryptoAPIError> {
 
-    let iterations : usize = 100;
+    let iterations : usize = 20;
 
     println!("PRIMERA IMPLEMENTACIÓN: Cifrado y descifrado de un mensaje");
     println!("Trabajando...");
@@ -414,46 +506,6 @@ fn main() -> Result<(), CryptoAPIError> {
 
 /*
     //////////////////////////////////////////////////////////////////////////////////7
-
-    println!("--- Multiplicar un vector de constantes por un mensaje cifrado ---\n");
-
-    // generate a secret key
-    let start_key = Instant::now(); // Comenzar temporizador
-    let secret_key = LWESecretKey::new(&LWE128_1024); // Generar clave de cifrado
-    let duration_key = start_key.elapsed(); // Finalizar temporizador
-
-    let messages: Vec<f64> = vec![6.1, 5.4, -2.7];
-    let constants: Vec<i32> = vec![-4, 5, 3];
-
-    // encoder
-    let start_encryption = Instant::now(); // Comenzar temporizador
-    let encoder = Encoder::new(-30., 30., 8, 0)?;
-    let mut ciphertext_vector = VectorLWE::encode_encrypt(&secret_key, &messages, &encoder)?;
-    let duration_encryption = start_encryption.elapsed(); // Finalizar temporizador
-
-    // vector multiplication between ciphertext and constants
-    let start_mult = Instant::now(); // Comenzar temporizador
-    ciphertext_vector.mul_constant_static_encoder_inplace(&constants)?;
-    let duration_mult = start_mult.elapsed(); // Finalizar temporizador
-
-    // decryption
-    let start_decryption = Instant::now(); // Comenzar temporizador
-    let outputs: Vec<f64> = ciphertext_vector.decrypt_decode(&secret_key)?;
-    let duration_decryption = start_decryption.elapsed(); // Finalizar temporizador
-
-
-    // Resultados finales
-    println!("Mensaje original: {:?}", messages);
-    println!("Vector de constantes: {:?}", constants);
-    println!("Mensaje descifrado: {:?}\n", outputs);
-    println!("Tiempo generando claves: {:?}", duration_key);
-    println!("Tiempo de cifrado 1: {:?}", duration_encryption);
-    println!("Tiempo transcurrido en la multiplicación: {:?}", duration_mult);
-    println!("Tiempo de descifrado: {:?}", duration_decryption);
-    println!("Tiempo de ejecución total: {:?}\n\n", start_key.elapsed());
-
-
-    //////////////////////////////////////////////////////////////////////////////////
 
     println!("\n //////////////////////////////////// \n");
     println!("CUARTA IMPLEMENTACIÓN: Bootstrapping \n");
