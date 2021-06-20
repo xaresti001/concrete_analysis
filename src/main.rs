@@ -11,7 +11,7 @@ fn encrypt_decrypt(iterations : usize) -> Result<(), CryptoAPIError> {
     let mut error_complete_vec : Vec<f64> = Vec::new();
 
     for index in 0..iterations{
-        // println!("\n\nPRIMERA IMPLEMENTACIÓN: cifrado y descifrado \n");
+
         let start_key = Instant::now(); // Comenzar temporizador
         let secret_key = LWESecretKey::new(&LWE80_1024); // Generar clave de cifrado
         let duration_key = start_key.elapsed(); // Finalizar temporizador
@@ -19,9 +19,6 @@ fn encrypt_decrypt(iterations : usize) -> Result<(), CryptoAPIError> {
 
         // a list of messages
         let messages: Vec<f64> = vec![-6.276, 4.3, 0.12, -1.1, 7.78]; // Vector de mensajes
-        // println!("Mensaje original: {:?}", messages);
-
-        secret_key.save("my_very_secret_key.json").unwrap(); // Función para guardar la clave en un archivo .json
 
         let start_encryption = Instant::now(); // Comenzar temporizador
         // create an encoder
