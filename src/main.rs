@@ -101,8 +101,8 @@ fn key_switching(iterations : usize) -> Result<(), CryptoAPIError> {
         let encoder = Encoder::new(100., 110., 8, 0)?;
 
         // generate two secret keys
-        let secret_key_before: LWESecretKey = LWESecretKey::new(&LWE128_1024); // Clave (1). Generar clave de cifrado
-        let secret_key_after : LWESecretKey = LWESecretKey::new(&LWE128_1024); // Clave (2). Generar clave de descifrado (segunda clave)
+        let secret_key_before: LWESecretKey = LWESecretKey::new(&LWE80_1024); // Clave (1). Generar clave de cifrado
+        let secret_key_after : LWESecretKey = LWESecretKey::new(&LWE80_1024); // Clave (2). Generar clave de descifrado (segunda clave)
 
         // generate the key switching key
         let ksk : LWEKSK = crypto_api::LWEKSK::new(&secret_key_before, &secret_key_after, 8, 2); // Clave (3). A partir de las dos claves generadas anteriormente, se genera la clave que va a permitir realizar el cambio de clave de cifrado.
