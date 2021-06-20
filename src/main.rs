@@ -113,7 +113,7 @@ fn key_switching(iterations : usize) -> Result<(), CryptoAPIError> {
 
         // a list of messages that we encrypt
         let messages: Vec<f64> = vec![106.276, 104.3, 100.12, 101.1, 107.78]; // Vector de mensajes
-        println!("Mensaje original: {:?}", messages);
+        // println!("Mensaje original: {:?}", messages);
 
         let start_encryption1 = Instant::now(); // Comenzar temporizador
         let ciphertext_before : VectorLWE = VectorLWE::encode_encrypt(&secret_key_before, &messages, &encoder)?; // Cifrar el mensaje original con Clave (1).
@@ -129,7 +129,7 @@ fn key_switching(iterations : usize) -> Result<(), CryptoAPIError> {
         let start_decryption = Instant::now(); // Comenzar temporizador
         // decryption
         let outputs: Vec<f64> = ciphertext_after.decrypt_decode(&secret_key_after)?; // Descifrar el mensaje cifrado resultante con la Clave (2).
-        println!("Output: {:?}", outputs);
+        // println!("Output: {:?}", outputs);
         let duration_decryption = start_decryption.elapsed(); // Finalizar temporizador
         duration_decryption_vec.push(duration_decryption.as_secs_f64());
         duration_complete_vec.push(start_key.elapsed().as_secs_f64());
