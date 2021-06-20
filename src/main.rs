@@ -94,8 +94,6 @@ fn key_switching(iterations : usize) -> Result<(), CryptoAPIError> {
 
     for index in 0..iterations{
 
-        // println!("\n //////////////////////////////////// \n");
-        // println!("SEGUNDA IMPLEMENTACIÓN: Key Switching \n");
         let start_key = Instant::now(); // Comenzar temporizador
         // encoder
         let encoder = Encoder::new(100., 110., 8, 0)?;
@@ -113,7 +111,6 @@ fn key_switching(iterations : usize) -> Result<(), CryptoAPIError> {
 
         // a list of messages that we encrypt
         let messages: Vec<f64> = vec![106.276, 104.3, 100.12, 101.1, 107.78]; // Vector de mensajes
-        // println!("Mensaje original: {:?}", messages);
 
         let start_encryption1 = Instant::now(); // Comenzar temporizador
         let ciphertext_before : VectorLWE = VectorLWE::encode_encrypt(&secret_key_before, &messages, &encoder)?; // Cifrar el mensaje original con Clave (1).
@@ -129,7 +126,6 @@ fn key_switching(iterations : usize) -> Result<(), CryptoAPIError> {
         let start_decryption = Instant::now(); // Comenzar temporizador
         // decryption
         let outputs: Vec<f64> = ciphertext_after.decrypt_decode(&secret_key_after)?; // Descifrar el mensaje cifrado resultante con la Clave (2).
-        // println!("Output: {:?}", outputs);
         let duration_decryption = start_decryption.elapsed(); // Finalizar temporizador
         duration_decryption_vec.push(duration_decryption.as_secs_f64());
         duration_complete_vec.push(start_key.elapsed().as_secs_f64());
@@ -140,8 +136,6 @@ fn key_switching(iterations : usize) -> Result<(), CryptoAPIError> {
             error_vec.push((element - messages[index]).abs()/(messages[index]).abs());
         }
 
-        // println!("Error {:?}", error_vec);
-
         // Calcular error medio del mensaje
         let mut sum : f64 = 0.;
         for (_index, element) in error_vec.iter().enumerate(){
@@ -149,8 +143,6 @@ fn key_switching(iterations : usize) -> Result<(), CryptoAPIError> {
         }
         error_complete_vec.push(sum/(error_vec.len() as f64));
     }
-
-    // println!("Complete error: {:?}", error_complete_vec);
 
     let mut encrypt1_sum : f64 = 0.;
     let mut encrypt2_sum : f64 = 0.;
@@ -196,10 +188,6 @@ fn sum_of_constants(iterations : usize) -> Result<(), CryptoAPIError> {
     let mut error_complete_vec : Vec<f64> = Vec::new();
 
     for _index in 0..iterations{
-        // println!("\n //////////////////////////////////// \n");
-        // println!("TERCERA IMPLEMENTACIÓN: Operaciones Homomórficas (Leveled Operations) \n");
-
-        // println!("--- Sumar un vector de contantes a un mensaje cifrado ---\n");
 
         // generate a secret key
         let start_key = Instant::now(); // Comenzar temporizador
@@ -295,8 +283,6 @@ fn sum_of_ciphertexts(iterations : usize) -> Result<(), CryptoAPIError> {
     let mut error_complete_vec : Vec<f64> = Vec::new();
 
     for _index in 0..iterations{
-
-        // println!("--- Sumar mensajes cifrados ---\n");
 
         // generate a secret key
         let start_key = Instant::now(); // Comenzar temporizador
@@ -394,8 +380,6 @@ fn mul_of_constants(iterations : usize) -> Result<(), CryptoAPIError> {
     let mut error_complete_vec : Vec<f64> = Vec::new();
 
     for _index in 0..iterations{
-
-        // println!("--- Multiplicar un vector de constantes por un mensaje cifrado ---\n");
 
         // generate a secret key
         let start_key = Instant::now(); // Comenzar temporizador
