@@ -300,7 +300,7 @@ fn sum_of_ciphertexts(iterations : usize) -> Result<(), CryptoAPIError> {
 
         // generate a secret key
         let start_key = Instant::now(); // Comenzar temporizador
-        let secret_key = LWESecretKey::new(&LWE128_630); // Generar clave de cifrado
+        let secret_key = LWESecretKey::new(&LWE128_1024); // Generar clave de cifrado
         let duration_key = start_key.elapsed(); // Finalizar temporizador
         duration_key_vec.push(duration_key.as_secs_f64());
 
