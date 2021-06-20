@@ -486,6 +486,7 @@ fn main() -> Result<(), CryptoAPIError> {
     //let iterations : usize = 20;
     let args : Vec<String> =  env::args().collect();
     let iterations : usize = args[1].parse().unwrap();
+    println!("Iteraciones: {}", iterations);
 
     println!("PRIMERA IMPLEMENTACIÓN: Cifrado y descifrado de un mensaje");
     println!("Trabajando...");
