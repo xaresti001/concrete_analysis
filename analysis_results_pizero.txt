@@ -1,0 +1,53 @@
+Iteraciones: 100
+PRIMERA IMPLEMENTACIÓN: Cifrado y descifrado de un mensaje
+Trabajando...
+/ RESULTS /
+Encrypt average: 0.00805636794s
+Decrypt average: 0.00352452909s
+Key Generation average: 0.0010319997500000005s
+Execution average: 0.01266356678s
+Average messages error: 0.0000000014334211219179986%
+
+
+SEGUNDA IMPLEMENTACIÓN: Key Switching
+Trabajando...
+/ RESULTS /
+Encrypt 1 average: 0.00791615638s
+Encrypt 2 average: 4.0912442988399995s
+Decrypt average: 0.0035356249599999994s
+Key Generation average: 3.2939816750300004s
+Execution average: 7.396753594960001s
+Average messages error: 0.0007860874581846496%
+
+
+TERCERA IMPLEMENTACIÓN: Suma de constantes y mensaje cifrado
+Trabajando...
+/ RESULTS /
+Encrypt average: 0.007832465109999999s
+Sum average: 0.000027619149999999995s
+Decrypt average: 0.00344378121s
+Key Generation average: 0.00016122532000000005s
+Execution average: 0.011523119370000003s
+Average messages error: 0.000000000040566740643194784%
+
+
+CUARTA IMPLEMENTACIÓN: Suma de mensajes cifrados
+Trabajando...
+/ RESULTS /
+Encrypt average: 0.015696550689999998s
+Sum average: 0.0020333817899999998s
+Decrypt average: 0.0034602409599999995s
+Key Generation average: 0.00017451504999999991s
+Execution average: 0.021435536500000005s
+Average messages error: 0.0000000001893215470907262%
+
+
+QUINTA IMPLEMENTACIÓN: Multiplicación de constantres y un mensaje cifrado
+Trabajando...
+/ RESULTS /
+Encrypt average: 0.00472936492s
+Multiplication average: 0.0011656767599999998s
+Decrypt average: 0.00204230164s
+Key Generation average: 0.00015345557999999997s
+Execution average: 0.00815281723s
+Average messages error: 0.0000000005704595189414116%
